@@ -4,12 +4,11 @@
   "description": "Official Notion MCP Server wrapped for Google Cloud Run",
   "private": true,
   "scripts": {
-    "start": "npx supergateway --stdio \"notion-mcp-server\" --port 8080 --outputTransport streamableHttp --streamableHttpPath /mcp --cors"
+    "start": "node src/server.mjs"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
     "@notionhq/notion-mcp-server": "latest",
-    "express": "^4.21.2",
-    "http-proxy-middleware": "^3.0.3",
-    "supergateway": "latest"
+    "express": "^4.21.2"
   }
 }
