@@ -58,8 +58,8 @@ jobs:
             --port=8080 \
             --min-instances=1 \
             --max-instances=10 \
-            --memory=512Mi \
-            --cpu=1 \
+            --memory=1Gi \
+            --cpu=2 \
             --no-cpu-throttling
 
       - name: Show service URL
