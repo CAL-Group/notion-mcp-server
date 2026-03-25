@@ -26,12 +26,33 @@ gateway.on('exit', (code) => {
   process.exit(1);
 });
 
-// Give supergateway a moment to start
-await new Promise((r) => setTimeout(r, 2000));
+// Poll until supergateway is actually ready (up to 30s)
+const waitForGateway = async () => {
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    try {
+      const res = await fetch(`http://localhost:${GATEWAY_PORT}/mcp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'healthcheck', version: '0' } } }),
+      });
+      if (res.status < 500) {
+        console.log('[auth-proxy] supergateway ready');
+        return;
+      }
+    } catch {
+      // not up yet
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error('supergateway did not become ready in 30s');
+};
+
+await waitForGateway();
 
 const app = express();
 
-// CORS — allow all origins (requests come from n8n's server, not browser)
+// CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'content-type, authorization, x-api-key, mcp-session-id');
@@ -52,15 +73,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// Proxy everything to supergateway
+// Proxy to supergateway
 app.use(
   createProxyMiddleware({
     target: `http://localhost:${GATEWAY_PORT}`,
     changeOrigin: true,
-    // Required for SSE / streaming responses
     on: {
-      proxyRes: (proxyRes) => {
-        proxyRes.headers['cache-control'] = 'no-cache';
+      error: (err, req, res) => {
+        console.error('[proxy] error:', err.message);
+        res.status(502).json({ error: 'Bad gateway', detail: err.message });
       },
     },
   })

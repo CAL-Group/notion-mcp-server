@@ -56,10 +56,11 @@ jobs:
             --allow-unauthenticated \
             --set-secrets=NOTION_TOKEN=notion-token:latest,MCP_API_KEY=mcp-api-key:latest \
             --port=8080 \
-            --min-instances=0 \
+            --min-instances=1 \
             --max-instances=10 \
             --memory=512Mi \
-            --cpu=1
+            --cpu=1 \
+            --no-cpu-throttling
 
       - name: Show service URL
         run: |
