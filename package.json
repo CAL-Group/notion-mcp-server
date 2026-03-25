@@ -4,7 +4,7 @@
   "description": "Official Notion MCP Server wrapped for Google Cloud Run",
   "private": true,
   "scripts": {
-    "start": "supergateway --stdio \"npx -y @notionhq/notion-mcp-server\" --port 8080 --baseUrl $BASE_URL --ssePath /sse --messagePath /message"
+    "start": "supergateway --stdio \"npx -y @notionhq/notion-mcp-server\" --port 8080 --outputTransport streamableHttp --streamableHttpPath /mcp"
   },
   "dependencies": {
     "@notionhq/notion-mcp-server": "latest",
