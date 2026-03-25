@@ -7,6 +7,10 @@ const GATEWAY_PORT = 3001;
 
 if (!API_KEY) throw new Error('MCP_API_KEY environment variable is required');
 
+// Trim secrets — Secret Manager sometimes includes a trailing newline
+if (process.env.NOTION_TOKEN) process.env.NOTION_TOKEN = process.env.NOTION_TOKEN.trim();
+process.env.MCP_API_KEY = API_KEY.trim();
+
 // Start supergateway on internal port
 const gateway = spawn(
   'npx',
