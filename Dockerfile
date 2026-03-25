@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install --omit=dev
 
+# Pre-install notion-mcp-server globally so supergateway doesn't npx-download it per request
+RUN npm install -g @notionhq/notion-mcp-server
+
 # Copy remaining files
 COPY . .
 
