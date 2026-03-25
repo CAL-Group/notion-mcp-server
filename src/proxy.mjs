@@ -14,8 +14,9 @@ const gateway = spawn(
     '-y', 'supergateway',
     '--stdio', 'npx -y @notionhq/notion-mcp-server',
     '--port', String(GATEWAY_PORT),
-    '--outputTransport', 'streamableHttp',
-    '--streamableHttpPath', '/mcp',
+    '--outputTransport', 'sse',
+    '--ssePath', '/sse',
+    '--messagePath', '/message',
   ],
   { stdio: 'inherit', env: process.env }
 );
