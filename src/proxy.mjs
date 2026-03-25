@@ -14,9 +14,9 @@ const gateway = spawn(
     '-y', 'supergateway',
     '--stdio', 'npx -y @notionhq/notion-mcp-server',
     '--port', String(GATEWAY_PORT),
-    '--outputTransport', 'sse',
-    '--ssePath', '/sse',
-    '--messagePath', '/message',
+    '--outputTransport', 'streamableHttp',
+    '--streamableHttpPath', '/mcp',
+    '--cors',
   ],
   { stdio: 'inherit', env: process.env }
 );
@@ -30,6 +30,15 @@ gateway.on('exit', (code) => {
 await new Promise((r) => setTimeout(r, 2000));
 
 const app = express();
+
+// CORS — allow all origins (requests come from n8n's server, not browser)
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'content-type, authorization, x-api-key, mcp-session-id');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  if (req.method === 'OPTIONS') { res.sendStatus(204); return; }
+  next();
+});
 
 // API key validation
 app.use((req, res, next) => {
