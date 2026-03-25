@@ -54,7 +54,7 @@ jobs:
             --region=${{ env.REGION }} \
             --platform=managed \
             --allow-unauthenticated \
-            --set-secrets=NOTION_TOKEN=notion-token:latest \
+            --set-secrets=NOTION_TOKEN=notion-token:latest,MCP_API_KEY=mcp-api-key:latest \
             --port=8080 \
             --min-instances=0 \
             --max-instances=10 \
